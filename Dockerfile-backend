@@ -1,0 +1,21 @@
+FROM python:3.9
+
+WORKDIR /app
+
+COPY . .
+
+ENV SECRET_KEY=UQWBDNOWHE&!@#*(*YU!@#YFyibjk1n38yo12fg3iuohb!*@#)ownfm \
+    DEBUG=False \
+    ALLOWED_HOSTS=127.0.0.1 \
+    DB_ENGINE=django.db.backends.postgresql \
+    DB_NAME=my_db \
+    DB_USER=postgres \
+    DB_PASSWORD=postgres \
+    DB_HOST=postgredb
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD python manage.py makemigrations && \
+    python manage.py migrate && \
+    python manage.py collectstatic && \
+    gunicorn stocks_products.wsgi:application --bind 0.0.0.0:8000
